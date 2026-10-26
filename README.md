@@ -4,6 +4,15 @@
 
 LLM — GigaChat через OpenAI-совместимый API.
 
+## Что где
+
+| Пункт задания | Где |
+|---|---|
+| Рабочий черновик | FastAPI + страница (`app/`), запуск ниже; проверка качества — `eval.py` |
+| Промпты | [`prompts/extract_card.md`](prompts/extract_card.md) — боевой промпт; [`docs/PROMPTS.md`](docs/PROMPTS.md) — почему он такой и как менялся v1 → v2 |
+| Записка | [`docs/NOTE.md`](docs/NOTE.md) |
+| Результаты прогонов | [`docs/eval/`](docs/eval/) — отчёты и полные ответы модели |
+
 ## Запуск
 
 ```bash
