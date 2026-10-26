@@ -1,6 +1,7 @@
 import json
 import re
 import sys
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from pydantic import ValidationError
@@ -11,6 +12,7 @@ from app.models import CrmCard, ExtractionResult, LLMAnswer
 ROOT = Path(__file__).resolve().parent.parent
 PROMPT_PATH = ROOT / "prompts" / "extract_card.md"
 CATALOG_PATH = ROOT / "data" / "products.json"
+WEEKDAYS = ["понедельник", "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"]
 
 
 class CardExtractor:
@@ -24,7 +26,7 @@ class CardExtractor:
     def extract(self, email: str) -> ExtractionResult:
         messages = [
             {"role": "system", "content": self._system_prompt},
-            {"role": "user", "content": email},
+            {"role": "user", "content": f"{date_hint(email)}\n\nПисьмо:\n{email}"},
         ]
         response = self._llm.chat(messages)
         prompt_tokens, completion_tokens, seconds = response.prompt_tokens, response.completion_tokens, response.seconds
@@ -56,6 +58,25 @@ class CardExtractor:
 
 def format_catalog(catalog: list[dict]) -> str:
     return "\n".join(f"- {item['id']} — {item['name']} (синонимы: {', '.join(item['aliases'])})" for item in catalog)
+
+
+def date_hint(email: str) -> str:
+    """Дата письма и ближайший день каждого дня недели: даты модель не считает, а берёт готовыми.
+
+    Вариант с календарём на 2 недели не сработал: «до пятницы» модель 3 раза из 3 относила к пятнице через неделю.
+    """
+    sent = find_email_date(email)
+    if sent is None:
+        return "Дата письма не найдена: относительные сроки не пересчитывай, deadline = null, добавь предупреждение."
+    nearest = [sent + timedelta(days=i) for i in range(1, 8)]
+    days = "\n".join(f"- {WEEKDAYS[d.weekday()]}: {d:%Y-%m-%d}" for d in nearest)
+    return f"Дата письма: {sent:%Y-%m-%d}, {WEEKDAYS[sent.weekday()]}.\nБлижайшие дни недели после даты письма:\n{days}"
+
+
+def find_email_date(email: str) -> date | None:
+    """Первая дата в заголовках — это дата самого письма; даты ниже относятся к пересланной переписке."""
+    match = re.search(r"^Дата:\s*(\d{2}\.\d{2}\.\d{4})", email, flags=re.MULTILINE)
+    return datetime.strptime(match.group(1), "%d.%m.%Y").date() if match else None
 
 
 def parse_answer(text: str) -> LLMAnswer:
