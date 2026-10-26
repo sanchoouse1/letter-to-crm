@@ -36,11 +36,16 @@ class GigaChatClient:
     @classmethod
     def from_env(cls) -> "GigaChatClient":
         load_dotenv()
+        ca_bundle = os.getenv("GIGACHAT_CA_BUNDLE")
+        if ca_bundle and not os.path.isfile(ca_bundle):
+            raise FileNotFoundError(
+                f"Сертификат не найден: {ca_bundle}. Нужен RSA-сертификат Russian Trusted Root CA с gosuslugi.ru/crt (не ГОСТ)"
+            )
         return cls(
             auth_key=os.environ["GIGACHAT_AUTH_KEY"],
             scope=os.getenv("GIGACHAT_SCOPE", "GIGACHAT_API_PERS"),
             model=os.getenv("GIGACHAT_MODEL", "GigaChat-2-Max"),
-            ca_bundle=os.getenv("GIGACHAT_CA_BUNDLE") or True,
+            ca_bundle=ca_bundle or True,
         )
 
     def chat(self, messages: list[dict], temperature: float = 0.1) -> LLMResponse:

@@ -6,9 +6,9 @@
 |---|---|---|---|
 | 1 | Каркас проекта | `requirements.txt`, `.env.example`, структура, черновик README, этот файл | ✅ |
 | 2 | Синтетические данные | `data/products.json`, 4 письма, 4 эталонные карточки | ✅ |
-| 3 | Модели и клиент GigaChat | `app/models.py`, `app/llm.py` (OAuth, кэш токена, сертификат), smoke-вызов | 🟡 |
+| 3 | Модели и клиент GigaChat | `app/models.py`, `app/llm.py` (OAuth, кэш токена, сертификат), smoke-вызов | ✅ |
 | 4 | Экстрактор и промпт v1 | `prompts/extract_card.md`, `app/extractor.py` (парсинг, повтор, проверка цитат) | ✅ |
-| 5 | Eval | `eval.py`, первый прогон, результаты v1 в `docs/PROMPTS.md` | 🟡 |
+| 5 | Eval | `eval.py`, первый прогон, результаты v1 в `docs/PROMPTS.md` | ✅ |
 | 6 | Итерация промпта v2 | Правки по ошибкам eval, повторный прогон, разница в `docs/PROMPTS.md` | ⬜ |
 | 7 | API + UI | `app/main.py`, `app/static/index.html` | ⬜ |
 

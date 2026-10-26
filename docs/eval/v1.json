@@ -1,0 +1,191 @@
+{
+  "01_simple_kp": {
+    "card": {
+      "company": "ООО «АгроВосток»",
+      "contact": {
+        "name": "Ирина Белова",
+        "position": "Руководитель ИТ-отдела",
+        "email": "i.belova@agrovostok.example",
+        "phone": "+7 (473) 555-01-23"
+      },
+      "request_summary": "Запрос коммерческого предложения на поставку трех серверов 2U с монтажом и пусконаладкой.",
+      "products": [
+        {
+          "catalog_id": "SRV-02",
+          "name_in_email": "серверы 2U",
+          "quantity": 3
+        },
+        {
+          "catalog_id": "SVC-01",
+          "name_in_email": "монтаж и пусконаладка",
+          "quantity": 1
+        }
+      ],
+      "urgency": {
+        "level": "medium",
+        "deadline": "2026-10-30",
+        "reason": "защита бюджета в ноябре"
+      }
+    },
+    "evidence": {
+      "company": "ООО «АгроВосток»",
+      "contact.name": "Ирина Белова",
+      "contact.position": "Руководитель ИТ-отдела",
+      "contact.email": "i.belova@agrovostok.example",
+      "contact.phone": "+7 (473) 555-01-23",
+      "request_summary": "Просим подготовить коммерческое предложение на 3 сервера 2U (два процессора, от 256 ГБ памяти) с монтажом и пусконаладкой на нашей площадке в Воронеже.",
+      "urgency.level": "КП нужно до 30 октября — в начале ноября защищаем бюджет."
+    },
+    "warnings": [],
+    "unconfirmed": [
+      "urgency.deadline",
+      "products[0]",
+      "products[1]"
+    ],
+    "prompt_tokens": 1214,
+    "completion_tokens": 366,
+    "seconds": 7.68
+  },
+  "02_forwarded_chain": {
+    "card": {
+      "company": "АО «Северный терминал»",
+      "contact": {
+        "name": "Дмитрий Козлов",
+        "position": "Ведущий инженер сетевой инфраструктуры",
+        "email": "d.kozlov@sevterminal.example",
+        "phone": "+7 (812) 555-40-17"
+      },
+      "request_summary": "Запрос коммерческого предложения на поставку 10 коммутаторов на 48 портов и 2 коммутаторов 10G.",
+      "products": [
+        {
+          "catalog_id": "NET-01",
+          "name_in_email": "коммутаторы на 48 портов",
+          "quantity": 10
+        },
+        {
+          "catalog_id": "NET-02",
+          "name_in_email": "коммутаторы 10G",
+          "quantity": 2
+        }
+      ],
+      "urgency": {
+        "level": "medium",
+        "deadline": "2026-11-30",
+        "reason": "Закупку нужно закрыть до 30 ноября."
+      }
+    },
+    "evidence": {
+      "company": "АО «Северный терминал»",
+      "contact.name": "Дмитрий Козлов",
+      "contact.position": "Ведущий инженер сетевой инфраструктуры",
+      "contact.email": "<d.kozlov@sevterminal.example>",
+      "contact.phone": "+7 (812) 555-40-17",
+      "request_summary": "Просим КП на аналогичную конфигурацию: 10 коммутаторов на 48 портов и 2 коммутатора 10G для ядра сети.",
+      "urgency.level": "Закупку нужно закрыть до 30 ноября.",
+      "urgency.deadline": "Закупку нужно закрыть до 30 ноября."
+    },
+    "warnings": [],
+    "unconfirmed": [
+      "products[0]",
+      "products[1]"
+    ],
+    "prompt_tokens": 1386,
+    "completion_tokens": 388,
+    "seconds": 8.56
+  },
+  "03_vague_request": {
+    "card": {
+      "company": "архитектурное бюро «Линия»",
+      "contact": {
+        "name": "Анна",
+        "position": null,
+        "email": "anna@liniya-bureau.example",
+        "phone": null
+      },
+      "request_summary": "Клиент интересуется рабочими станциями для 3D-визуализации и большими мониторами.",
+      "products": [
+        {
+          "catalog_id": "WS-02",
+          "name_in_email": "нормальные машины, которые потянут рендер",
+          "quantity": 6
+        },
+        {
+          "catalog_id": "MON-01",
+          "name_in_email": "большой экран",
+          "quantity": 6
+        }
+      ],
+      "urgency": {
+        "level": "low",
+        "deadline": null,
+        "reason": null
+      }
+    },
+    "evidence": {
+      "company": "мы небольшое архитектурное бюро «Линия»",
+      "contact.name": "От: Анна",
+      "contact.email": "От: Анна <anna@liniya-bureau.example>",
+      "request_summary": "Пока просто присматриваемся, закупать планируем скорее в следующем году.",
+      "products[0].name_in_email": "хотим обновить технику: нормальные машины, которые потянут рендер",
+      "products[1].name_in_email": "к каждой по большому экрану",
+      "urgency.level": "закупать планируем скорее в следующем году"
+    },
+    "warnings": [
+      "Не указана должность контактного лица."
+    ],
+    "unconfirmed": [
+      "products[0]",
+      "products[1]"
+    ],
+    "prompt_tokens": 151,
+    "completion_tokens": 305,
+    "seconds": 6.87
+  },
+  "04_urgent_claim": {
+    "card": {
+      "company": "ООО «Фармлогистик»",
+      "contact": {
+        "name": "Сергей Миронов",
+        "position": "Системный администратор",
+        "email": "s.mironov@farmlogistic.example",
+        "phone": "+7 (916) 555-12-34"
+      },
+      "request_summary": "Перебои в работе установленного ранее коммутатора 10G, требуется выезд инженера.",
+      "products": [
+        {
+          "catalog_id": "NET-02",
+          "name_in_email": "коммутатор 10G (24 порта)",
+          "quantity": 1
+        },
+        {
+          "catalog_id": "SUP-01",
+          "name_in_email": "договор техподдержки 24/7",
+          "quantity": null
+        }
+      ],
+      "urgency": {
+        "level": "high",
+        "deadline": "2026-10-27",
+        "reason": "Простой склада, риск срыва поставок"
+      }
+    },
+    "evidence": {
+      "company": "ООО «Фармлогистик»",
+      "contact.name": "Миронов С.П.\nСистемный администратор\nООО «Фармлогистик»",
+      "contact.position": "Миронов С.П.\nСистемный администратор\nООО «Фармлогистик»",
+      "contact.email": "От: Сергей Миронов <s.mironov@farmlogistic.example>",
+      "contact.phone": "Звоните мне на мобильный: +7 (916) 555-12-34",
+      "request_summary": "Со вчерашнего вечера он каждые 20–30 минут перезагружается, сканеры на складе теряют связь, отгрузка фактически стоит.\nНужен выезд инженера до пятницы, иначе сорвём отгрузки аптечным сетям.",
+      "urgency.level": "СРОЧНО!",
+      "urgency.deadline": "Нужен выезд инженера до пятницы"
+    },
+    "warnings": [],
+    "unconfirmed": [
+      "products[0]",
+      "products[1]"
+    ],
+    "prompt_tokens": 221,
+    "completion_tokens": 436,
+    "seconds": 9.75
+  }
+}
