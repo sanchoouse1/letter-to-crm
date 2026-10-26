@@ -10,7 +10,7 @@
 | 4 | Экстрактор и промпт v1 | `prompts/extract_card.md`, `app/extractor.py` (парсинг, повтор, проверка цитат) | ✅ |
 | 5 | Eval | `eval.py`, первый прогон, результаты v1 в `docs/PROMPTS.md` | ✅ |
 | 6 | Итерация промпта v2 | Правки по ошибкам eval, повторный прогон, разница в `docs/PROMPTS.md` | ✅ |
-| 7 | API + UI | `app/main.py`, `app/static/index.html` | ⬜ |
+| 7 | API + UI | `app/main.py`, `app/static/index.html` | 🟡 |
 
 ## Критерий «готово»
 

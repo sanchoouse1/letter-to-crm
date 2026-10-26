@@ -10,6 +10,9 @@ LLM — GigaChat через OpenAI-совместимый API.
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env   # вписать GIGACHAT_AUTH_KEY и путь к сертификату
+
+uvicorn app.main:app --reload   # UI: http://localhost:8000
+python eval.py                  # проверка качества на примерах из data/
 ```
 
 ## Структура

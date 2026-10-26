@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Письмо → карточка CRM</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #fff; --text: #1d2330; --muted: #6b7385; --border: #dde1e8;
+    --accent: #2f6fde; --warn-bg: #fff6e0; --warn: #a86a00; --error: #c62828;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.45 system-ui, -apple-system, sans-serif; }
+  header { padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--panel); }
+  header h1 { margin: 0; font-size: 18px; }
+  header p { margin: 4px 0 0; color: var(--muted); }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px 24px; max-width: 1400px; margin: 0 auto; }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; padding: 16px; } }
+  section { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; min-width: 0; }
+  h2 { margin: 0 0 12px; font-size: 15px; }
+  .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  textarea, input, select { width: 100%; font: inherit; color: inherit; padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px; background: #fff; }
+  #email { height: 520px; resize: vertical; font-family: ui-monospace, Menlo, monospace; font-size: 13px; margin-top: 8px; }
+  button { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: #fff; cursor: pointer; white-space: nowrap; }
+  button.secondary { background: #fff; color: var(--accent); }
+  button:disabled { opacity: .6; cursor: wait; }
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 4px; }
+  .field.empty input, .field.empty textarea { background: #fafbfc; }
+  .field.unconfirmed input, .field.unconfirmed textarea, .field.unconfirmed select { border-color: var(--warn); background: var(--warn-bg); }
+  .quote { color: var(--muted); font-size: 12px; margin-top: 3px; overflow-wrap: anywhere; }
+  .flag { color: var(--warn); font-size: 12px; margin-top: 3px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+  table { width: 100%; border-collapse: collapse; }
+  td, th { padding: 4px; vertical-align: top; text-align: left; }
+  th { font-size: 12px; color: var(--muted); font-weight: 500; }
+  td.qty { width: 80px; }
+  .warnings { background: var(--warn-bg); border-radius: 6px; padding: 8px 12px; margin-bottom: 12px; }
+  .warnings ul { margin: 4px 0 0; padding-left: 18px; }
+  .stats { color: var(--muted); font-size: 12px; }
+  .error { color: var(--error); white-space: pre-wrap; }
+  .placeholder { color: var(--muted); padding: 40px 0; text-align: center; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Письмо → карточка CRM</h1>
+  <p>Вставьте письмо клиента — поля карточки заполнятся автоматически. Проверьте подсвеченные ⚠️ поля и скопируйте карточку в CRM.</p>
+</header>
+<main>
+  <section>
+    <h2>Входящее письмо</h2>
+    <div class="row">
+      <select id="examples" style="flex:1"><option value="">— пример письма —</option></select>
+      <button id="extract">Извлечь</button>
+    </div>
+    <textarea id="email" placeholder="От: …&#10;Дата: …&#10;Тема: …&#10;&#10;Текст письма"></textarea>
+  </section>
+
+  <section>
+    <h2>Карточка CRM</h2>
+    <div id="card"><div class="placeholder">Здесь появится карточка</div></div>
+  </section>
+</main>
+
+<template id="card-template">
+  <div id="warnings" class="warnings" hidden><b>Модель предупреждает:</b><ul></ul></div>
+  <div data-field="company" data-label="Компания"></div>
+  <div class="grid2">
+    <div data-field="contact.name" data-label="Контакт"></div>
+    <div data-field="contact.position" data-label="Должность"></div>
+    <div data-field="contact.email" data-label="Email"></div>
+    <div data-field="contact.phone" data-label="Телефон"></div>
+  </div>
+  <div data-field="request_summary" data-label="Суть запроса" data-multiline></div>
+  <div class="field">
+    <label>Продукты</label>
+    <table>
+      <thead><tr><th>Позиция справочника</th><th>Как в письме</th><th>Кол-во</th></tr></thead>
+      <tbody id="products"></tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div data-field="urgency.level" data-label="Срочность" data-select></div>
+    <div data-field="urgency.deadline" data-label="Дедлайн" data-date></div>
+  </div>
+  <div data-field="urgency.reason" data-label="Почему такая срочность"></div>
+  <div class="row" style="justify-content: space-between; margin-top: 8px">
+    <span class="stats" id="stats"></span>
+    <button class="secondary" id="copy">Скопировать JSON для CRM</button>
+  </div>
+</template>
+
+<script>
+const URGENCY = { high: "Высокая", medium: "Средняя", low: "Низкая" };
+const $ = (selector, root = document) => root.querySelector(selector);
+let catalog = [];
+
+async function init() {
+  const [examples, products] = await Promise.all([fetch("/api/examples"), fetch("/api/products")].map(p => p.then(r => r.json())));
+  catalog = products;
+  const select = $("#examples");
+  for (const example of examples) {
+    select.append(new Option(example.name, example.text));
+  }
+  select.addEventListener("change", () => { $("#email").value = select.value; });
+  $("#extract").addEventListener("click", extract);
+}
+
+async function extract() {
+  const email = $("#email").value.trim();
+  if (!email) return;
+  const button = $("#extract");
+  button.disabled = true;
+  button.textContent = "Извлекаю… ~10 с";
+  try {
+    const response = await fetch("/api/extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(typeof data.detail === "string" ? data.detail : JSON.stringify(data.detail));
+    renderCard(data);
+  } catch (error) {
+    $("#card").innerHTML = "";
+    const message = document.createElement("div");
+    message.className = "error";
+    message.textContent = error.message;
+    $("#card").append(message);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Извлечь";
+  }
+}
+
+function get(obj, path) {
+  return path.split(".").reduce((value, key) => value?.[key], obj);
+}
+
+function renderCard(result) {
+  const container = $("#card");
+  container.innerHTML = "";
+  container.append($("#card-template").content.cloneNode(true));
+
+  if (result.warnings.length) {
+    $("#warnings").hidden = false;
+    for (const warning of result.warnings) {
+      const li = document.createElement("li");
+      li.textContent = warning;
+      $("#warnings ul").append(li);
+    }
+  }
+
+  for (const slot of container.querySelectorAll("[data-field]")) {
+    const path = slot.dataset.field;
+    let input;
+    if ("select" in slot.dataset) {
+      input = document.createElement("select");
+      input.append(new Option("—", ""));
+      for (const [value, label] of Object.entries(URGENCY)) input.append(new Option(label, value));
+    } else if ("multiline" in slot.dataset) {
+      input = document.createElement("textarea");
+      input.rows = 3;
+    } else {
+      input = document.createElement("input");
+      if ("date" in slot.dataset) input.type = "date";
+    }
+    input.dataset.path = path;
+    input.value = get(result.card, path) ?? "";
+    fillField(slot, slot.dataset.label, input, path, result);
+  }
+
+  result.card.products.forEach((product, i) => {
+    const row = document.createElement("tr");
+    const select = document.createElement("select");
+    select.append(new Option("— нет в справочнике —", ""));
+    for (const item of catalog) select.append(new Option(`${item.id} · ${item.name}`, item.id));
+    select.value = product.catalog_id ?? "";
+
+    const name = Object.assign(document.createElement("input"), { value: product.name_in_email });
+    const quantity = Object.assign(document.createElement("input"), { type: "number", min: 1, value: product.quantity ?? "" });
+
+    const nameCell = document.createElement("td");
+    fillField(nameCell, null, name, `products[${i}]`, result);
+    row.append(wrap(select), nameCell, wrap(quantity, "qty"));
+    $("#products").append(row);
+  });
+
+  $("#stats").textContent = `${result.seconds} с · ${result.prompt_tokens}+${result.completion_tokens} токенов`;
+  $("#copy").addEventListener("click", copyCard);
+}
+
+function fillField(slot, label, input, path, result) {
+  slot.classList.add("field");
+  if (label) slot.append(Object.assign(document.createElement("label"), { textContent: label }));
+  slot.append(input);
+  if (!input.value) {
+    slot.classList.add("empty");
+    input.placeholder = "нет в письме";
+  }
+  if (result.unconfirmed.includes(path)) {
+    slot.classList.add("unconfirmed");
+    slot.append(Object.assign(document.createElement("div"), { className: "flag", textContent: "⚠️ Цитата не найдена в письме — проверьте" }));
+  }
+  const quote = result.evidence[path];
+  if (quote) slot.append(Object.assign(document.createElement("div"), { className: "quote", textContent: `«${quote}»` }));
+}
+
+function wrap(element, className = "") {
+  const cell = document.createElement("td");
+  cell.className = className;
+  cell.append(element);
+  return cell;
+}
+
+// Карточку собираем из формы, а не из ответа модели: правки менеджера должны попасть в CRM
+function collectCard() {
+  const card = { contact: {}, urgency: {}, products: [] };
+  for (const input of document.querySelectorAll("#card [data-path]")) {
+    const keys = input.dataset.path.split(".");
+    const target = keys.length === 2 ? card[keys[0]] : card;
+    target[keys.at(-1)] = input.value.trim() || null;
+  }
+  for (const row of document.querySelectorAll("#products tr")) {
+    const [catalogId, name, quantity] = row.querySelectorAll("select, input");
+    card.products.push({ catalog_id: catalogId.value || null, name_in_email: name.value, quantity: quantity.value ? Number(quantity.value) : null });
+  }
+  return card;
+}
+
+async function copyCard() {
+  await navigator.clipboard.writeText(JSON.stringify(collectCard(), null, 2));
+  const button = $("#copy");
+  button.textContent = "Скопировано ✓";
+  setTimeout(() => { button.textContent = "Скопировать JSON для CRM"; }, 1500);
+}
+
+init();
+</script>
+</body>
+</html>
