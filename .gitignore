@@ -141,6 +141,7 @@ venv.bak/
 
 # mkdocs documentation
 /site
+*.pdf
 
 # mypy
 .mypy_cache/
@@ -174,3 +175,5 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+# Сертификаты GigaChat
+certs/
