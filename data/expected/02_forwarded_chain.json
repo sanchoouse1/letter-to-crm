@@ -1,0 +1,19 @@
+{
+  "company": "АО «Северный терминал»",
+  "contact": {
+    "name": "Дмитрий Козлов",
+    "position": "Ведущий инженер сетевой инфраструктуры",
+    "email": "d.kozlov@sevterminal.example",
+    "phone": "+7 (812) 555-40-17"
+  },
+  "request_summary": "Запрос КП на 10 коммутаторов на 48 портов и 2 коммутатора 10G для ядра; текущий поставщик не устроил сроками.",
+  "products": [
+    {"catalog_id": "NET-01", "name_in_email": "коммутаторов на 48 портов", "quantity": 10},
+    {"catalog_id": "NET-02", "name_in_email": "коммутатора 10G для ядра сети", "quantity": 2}
+  ],
+  "urgency": {
+    "level": "medium",
+    "deadline": "2026-11-30",
+    "reason": "Закупку нужно закрыть до 30 ноября"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "company": "Архитектурное бюро «Линия»",
+  "contact": {
+    "name": "Анна",
+    "position": null,
+    "email": "anna@liniya-bureau.example",
+    "phone": null
+  },
+  "request_summary": "Подбор техники для 6 дизайнеров: компьютеры для 3D-рендера и большие мониторы, нужны варианты и ориентировочные цены.",
+  "products": [
+    {"catalog_id": "WS-02", "name_in_email": "нормальные машины, которые потянут рендер", "quantity": 6},
+    {"catalog_id": "MON-01", "name_in_email": "большому экрану", "quantity": 6}
+  ],
+  "urgency": {
+    "level": "low",
+    "deadline": null,
+    "reason": "Пока присматриваются, закупка в следующем году"
+  }
+}

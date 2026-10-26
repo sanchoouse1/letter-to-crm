@@ -1,0 +1,19 @@
+{
+  "company": "ООО «АгроВосток»",
+  "contact": {
+    "name": "Ирина Белова",
+    "position": "Руководитель ИТ-отдела",
+    "email": "i.belova@agrovostok.example",
+    "phone": "+7 (473) 555-01-23"
+  },
+  "request_summary": "Запрос КП на 3 сервера 2U (2 процессора, от 256 ГБ) с монтажом и пусконаладкой в Воронеже.",
+  "products": [
+    {"catalog_id": "SRV-02", "name_in_email": "сервера 2U (два процессора, от 256 ГБ памяти)", "quantity": 3},
+    {"catalog_id": "SVC-01", "name_in_email": "монтажом и пусконаладкой", "quantity": null}
+  ],
+  "urgency": {
+    "level": "medium",
+    "deadline": "2026-10-30",
+    "reason": "КП нужно до 30 октября, к защите бюджета"
+  }
+}
